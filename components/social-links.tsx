@@ -18,7 +18,7 @@ interface PriceData {
 const socialLinks = [
   {
     name: 'Telegram',
-    href: 'https://t.me/',
+    href: 'https://t.co/rSxYKDO4zJ',
     description: 'Join the flock',
     color: '#0088cc',
     icon: (
@@ -29,7 +29,7 @@ const socialLinks = [
   },
   {
     name: 'X / Twitter',
-    href: 'https://x.com/',
+    href: 'https://x.com/PomboGram',
     description: 'Follow updates',
     color: '#ffffff',
     icon: (
@@ -40,7 +40,7 @@ const socialLinks = [
   },
   {
     name: 'DexScreener',
-    href: 'https://dexscreener.com/',
+    href: 'https://dexscreener.com/ton/eqb1j6iiwcj1vkb1vcmyq74ydizo3reitgdj3myy5hy7mp5d',
     description: 'Live chart',
     color: '#4ade80',
     icon: (

@@ -146,7 +146,7 @@ export default function Hero() {
             <Image src="/logo.png" alt="POMBO Logo" width={48} height={48} className="rounded-full shadow-lg border-2 border-white/25" />
             <div className="flex flex-col">
               <span className="font-display text-2xl tracking-wide text-white text-stroke-pombo-header select-none">POMBO</span>
-              <span className="text-[9px] font-sans font-bold tracking-widest text-[#9ed3ff]">YOUR TRUSTED CARRIER PIGEON</span>
+              <span className="text-[9px] font-sans font-bold tracking-widest text-[#9ed3ff]">THE ORIGINAL MESSENGER</span>
             </div>
           </div>
 
@@ -175,8 +175,9 @@ export default function Hero() {
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
             <a
-              href="#buy"
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#0088cc] hover:bg-[#0099e6] rounded-xl text-sm font-sans font-extrabold tracking-wider text-white shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 border-b-4 border-[#005580]"
+              href="https://dexscreener.com/ton/eqb1j6iiwcj1vkb1vcmyq74ydizo3reitgdj3myy5hy7mp5d"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <Send className="w-4 h-4 -rotate-45" />
               BUY POMBO
@@ -213,9 +214,9 @@ export default function Hero() {
             ))}
             <div className="flex flex-col gap-3 mt-4">
               <a
-                href="#buy"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 py-3 bg-[#0088cc] rounded-xl text-sm font-sans font-extrabold tracking-wider text-white border-b-4 border-[#005580]"
+                href="https://dexscreener.com/ton/eqb1j6iiwcj1vkb1vcmyq74ydizo3reitgdj3myy5hy7mp5d"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Send className="w-4 h-4 -rotate-45" />
                 BUY POMBO
@@ -254,7 +255,7 @@ export default function Hero() {
 
               <motion.div variants={fadeInUp} className="flex flex-col gap-1 mb-8">
                 <span className="font-sans font-black text-xl sm:text-2xl md:text-3xl text-white tracking-wider uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                  YOUR TRUSTED CARRIER PIGEON
+                  THE ORIGINAL MESSENGER
                 </span>
                 <span className="font-sans font-black text-xl sm:text-2xl md:text-3xl text-[#9ed3ff] tracking-wider uppercase flex items-center gap-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                   ON
@@ -274,7 +275,7 @@ export default function Hero() {
                 variants={fadeInUp}
                 className="font-sans italic font-black text-2xl sm:text-3xl text-[#12396b] tracking-wide mb-10 leading-snug drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]"
               >
-                My duty is to deliver.<br />And deliver I shall.
+                Before the paper plane,<br />there were pigeons.
               </motion.p>
 
               {/* Interactive Buy/Join buttons */}
@@ -283,7 +284,9 @@ export default function Hero() {
                 className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-10"
               >
                 <a
-                  href="#buy"
+                  href="https://dexscreener.com/ton/eqb1j6iiwcj1vkb1vcmyq74ydizo3reitgdj3myy5hy7mp5d"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center justify-center gap-3 px-8 py-4 bg-[#0088cc] hover:bg-[#0099e6] rounded-2xl text-base font-sans font-extrabold tracking-wider text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 border-b-4 border-[#005580]"
                 >
                   <Send className="w-5 h-5 -rotate-45" />
@@ -291,7 +294,7 @@ export default function Hero() {
                   <Image src="/ton logo.png" alt="TON Logo" width={20} height={20} />
                 </a>
                 <a
-                  href="https://t.me/"
+                  href="https://t.co/rSxYKDO4zJ"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#0088cc] hover:text-[#0077b3] rounded-2xl text-base font-sans font-extrabold tracking-wider border-b-4 border-[#cbd5e1] hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_4px_0_#94a3b8] hover:translate-y-[2px]"
@@ -328,7 +331,7 @@ export default function Hero() {
                 className="flex items-center gap-4"
               >
                 <a
-                  href="https://t.me/"
+                  href="https://t.co/rSxYKDO4zJ"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-12 h-12 rounded-full bg-white text-[#0088cc] hover:bg-[#0088cc] hover:text-white flex items-center justify-center shadow-lg border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-90"
@@ -336,7 +339,7 @@ export default function Hero() {
                   <TelegramIcon />
                 </a>
                 <a
-                  href="https://x.com/"
+                  href="https://x.com/PomboGram"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-12 h-12 rounded-full bg-white text-black hover:bg-black hover:text-white flex items-center justify-center shadow-lg border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-90"

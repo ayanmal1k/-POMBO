@@ -85,7 +85,7 @@ export default function Footer() {
             </span>
           </div>
           <p className="footer-item font-sans text-[#9ed3ff] text-sm sm:text-base font-bold tracking-wider uppercase">
-            Your Trusted Carrier Pigeon on TON
+            The Original Messenger on TON
           </p>
           <div className="footer-item w-16 h-[2px] bg-gradient-to-r from-transparent via-[#0088cc] to-transparent mt-5" />
         </div>
@@ -93,7 +93,7 @@ export default function Footer() {
         {/* Middle section — links row */}
         <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-14">
           <a
-            href="https://t.me/"
+            href="https://t.co/rSxYKDO4zJ"
             target="_blank"
             rel="noopener noreferrer"
             className="footer-item group flex items-center gap-2 text-[#c6e3ff]/60 hover:text-white transition-colors duration-200"
@@ -106,7 +106,7 @@ export default function Footer() {
             </span>
           </a>
           <a
-            href="https://x.com/"
+            href="https://x.com/PomboGram"
             target="_blank"
             rel="noopener noreferrer"
             className="footer-item group flex items-center gap-2 text-[#c6e3ff]/60 hover:text-white transition-colors duration-200"
@@ -119,7 +119,7 @@ export default function Footer() {
             </span>
           </a>
           <a
-            href="https://dexscreener.com/"
+            href="https://dexscreener.com/ton/eqb1j6iiwcj1vkb1vcmyq74ydizo3reitgdj3myy5hy7mp5d"
             target="_blank"
             rel="noopener noreferrer"
             className="footer-item group flex items-center gap-2 text-[#c6e3ff]/60 hover:text-white transition-colors duration-200"

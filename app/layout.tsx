@@ -16,25 +16,60 @@ const sora = Sora({
 })
 
 export const metadata: Metadata = {
-  title: 'POMBO Token - Your Trusted Carrier Pigeon',
-  description: 'The trusted carrier pigeon on TON blockchain.',
-  generator: 'v0.app',
-  icons: {
-    icon: [
+  title: '$POMBO – Before the Paper Plane, There Were Pigeons',
+  description:
+    'Before the paper plane, there were pigeons. $POMBO is the legendary deadpan WhatsApp pigeon on TON blockchain — the original messenger turned internet culture icon. Sarcasm with a straight face.',
+  keywords: [
+    'POMBO',
+    '$POMBO',
+    'TON',
+    'TON blockchain',
+    'meme token',
+    'meme coin',
+    'pigeon',
+    'carrier pigeon',
+    'WhatsApp emoji',
+    'crypto',
+    'DeFi',
+    'Telegram',
+  ],
+  authors: [{ name: 'POMBO Team' }],
+  creator: 'POMBO',
+  metadataBase: new URL('https://pombo.fun'),
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    siteName: '$POMBO – The Original Messenger',
+    title: '$POMBO – Before the Paper Plane, There Were Pigeons',
+    description:
+      'Telegram is the modern messenger. Pigeons were the original. $POMBO brings the deadpan WhatsApp bird to TON — internet culture with a straight face.',
+    images: [
       {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: '/logo.png',
+        width: 512,
+        height: 512,
+        alt: 'POMBO Token Logo',
       },
     ],
-    apple: '/apple-icon.png',
+  },
+  twitter: {
+    card: 'summary',
+    site: '@PomboGram',
+    creator: '@PomboGram',
+    title: '$POMBO – Before the Paper Plane, There Were Pigeons',
+    description:
+      'Telegram is the modern messenger. Pigeons were the original. $POMBO brings the deadpan WhatsApp bird to TON.',
+    images: ['/logo.png'],
+  },
+  icons: {
+    icon: [
+      { url: '/logo.png', type: 'image/png' },
+    ],
+    apple: '/logo.png',
+    shortcut: '/logo.png',
+  },
+  other: {
+    'theme-color': '#061225',
   },
 }
 
