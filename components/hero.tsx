@@ -46,7 +46,7 @@ export default function Hero() {
 
 
   return (
-    <section className="relative w-full min-h-screen flex flex-col justify-between bg-cover bg-center overflow-x-hidden" style={{ backgroundImage: "url('/hero bg.png')" }}>
+    <section className="relative w-full min-h-[82vh] lg:min-h-[88vh] flex flex-col justify-between bg-cover bg-center overflow-x-hidden" style={{ backgroundImage: "url('/hero bg.png')" }}>
       {/* Dark overlay at top for navigation contrast */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0f2347]/60 via-transparent to-[#0a1e3d]/30 pointer-events-none" />
 
@@ -156,7 +156,7 @@ export default function Hero() {
       </header>
 
       {/* Main Hero Body */}
-      <div className="relative flex-grow flex items-center px-4 sm:px-6 lg:px-8 py-12 md:py-20 max-w-7xl mx-auto w-full z-10">
+      <div className="relative flex-grow flex items-center px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-14 max-w-7xl mx-auto w-full z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
           
           {/* Left Column - Content */}
