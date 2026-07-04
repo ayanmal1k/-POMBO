@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, Variants } from 'framer-motion'
+import { motion, Variants, useScroll, useTransform, useSpring } from 'framer-motion'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import { Copy, Check, Send, BarChart3, Menu, X as CloseIcon } from 'lucide-react'
@@ -9,21 +9,71 @@ import { Copy, Check, Send, BarChart3, Menu, X as CloseIcon } from 'lucide-react
 // Custom SVGs for Socials
 const TelegramIcon = () => (
   <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.98 1.25-5.59 3.69-.53.36-1 .54-1.4.53-.45-.01-1.32-.25-1.97-.46-.8-.26-1.43-.4-1.38-.85.03-.24.36-.48.99-.74 3.86-1.68 6.43-2.78 7.72-3.3 3.67-1.49 4.43-1.75 4.93-1.76.11 0 .36.03.52.16.14.11.18.26.19.38 0 .07.01.22 0 .33z"/>
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.98 1.25-5.59 3.69-.53.36-1 .54-1.4.53-.45-.01-1.32-.25-1.97-.46-.8-.26-1.43-.4-1.38-.85.03-.24.36-.48.99-.74 3.86-1.68 6.43-2.78 7.72-3.3 3.67-1.49 4.43-1.75 4.93-1.76.11 0 .36.03.52.16.14.11.18.26.19.38 0 .07.01.22 0 .33z" />
   </svg>
 )
 
 const XIcon = () => (
   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
   </svg>
 )
 
 export default function Hero() {
   const [copied, setCopied] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const contractAddress = 'EQAme5Z3_wsVhvSemTvwFToq2AIRz_NSFediKOgdl8H11EPh'
+  const contractAddress = 'EQAme5Z3_wsVhvSemTvwFToq2AIRz_NSfEdiKOgdI8H11EPh'
   const [stage, setStage] = useState<'loading' | 'transitioning' | 'ready'>('loading')
+  const [activeSection, setActiveSection] = useState<'hero' | 'lore'>('hero')
+  const [isDesktop, setIsDesktop] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    setIsDesktop(window.innerWidth >= 1024)
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const { scrollY } = useScroll()
+  // Add inertia smoothing for buttery progress
+  const smoothScrollY = useSpring(scrollY, { stiffness: 45, damping: 15 })
+
+  // Responsive left coordinate mapping
+  const left = useTransform(
+    smoothScrollY,
+    [0, 650],
+    [isDesktop ? "73%" : "50%", isDesktop ? "27%" : "50%"]
+  )
+
+  // Bird turn/mirroring trigger
+  const scaleX = useTransform(
+    smoothScrollY,
+    [0, 320, 321],
+    [1, 1, -1]
+  )
+
+  // Fade out bird as we scroll past the Lore section
+  const opacity = useTransform(
+    smoothScrollY,
+    [0, 1100, 1400],
+    [1, 1, 0]
+  )
+
+  // Responsive top coordinate mapping to keep bird pinned at top or center
+  const top = useTransform(
+    smoothScrollY,
+    [0, 650],
+    [isDesktop ? "50%" : "72%", isDesktop ? "32%" : "20%"]
+  )
 
   useEffect(() => {
     // Show bird centered for 1.8 seconds
@@ -39,6 +89,29 @@ export default function Hero() {
     return () => {
       clearTimeout(timer1)
       clearTimeout(timer2)
+    }
+  }, [])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id as 'hero' | 'lore')
+          }
+        })
+      },
+      { threshold: 0.25 }
+    )
+
+    const heroEl = document.getElementById('hero')
+    const loreEl = document.getElementById('lore')
+    if (heroEl) observer.observe(heroEl)
+    if (loreEl) observer.observe(loreEl)
+
+    return () => {
+      if (heroEl) observer.unobserve(heroEl)
+      if (loreEl) observer.unobserve(loreEl)
     }
   }, [])
 
@@ -64,16 +137,18 @@ export default function Hero() {
 
 
   return (
-    <section className="relative w-full min-h-[82vh] lg:min-h-[88vh] flex flex-col justify-between bg-cover bg-center overflow-hidden" style={{ backgroundImage: "url('/hero bg.png')" }}>
-      {/* Dark overlay at top for navigation contrast */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0f2347]/60 via-transparent to-[#0a1e3d]/30 pointer-events-none" />
+    <div className="relative w-full bg-[#061225]">
 
       {/* Header / Navbar */}
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={stage === 'ready' ? { y: 0, opacity: 1 } : { y: -100, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-        className="relative w-full z-50 backdrop-blur-md border-b border-white/10 bg-white/5 py-4 px-4 sm:px-6 lg:px-8"
+        className={`sticky top-0 w-full z-50 py-4 px-4 sm:px-6 lg:px-8 transition-all duration-300 ${
+          scrolled
+            ? 'backdrop-blur-md border-b border-white/10 bg-[#061225]/70'
+            : 'bg-transparent border-b border-transparent'
+        }`}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
@@ -86,17 +161,18 @@ export default function Hero() {
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-            {['HOME', 'ABOUT', 'TOKENOMICS', 'ROADMAP', 'HOW TO BUY', 'FAQ'].map((link) => (
+          <nav className="hidden md:flex items-center gap-8">
+            {['HOME', 'LORE', 'ABOUT', 'TOKENOMICS'].map((link) => (
               <a
                 key={link}
                 href={`#${link.toLowerCase().replace(/\s+/g, '-')}`}
-                className={`text-sm font-sans font-extrabold tracking-wider transition-colors relative py-1 ${
-                  link === 'HOME' ? 'text-white' : 'text-[#c6e3ff] hover:text-white'
-                }`}
+                className={`text-sm font-sans font-extrabold tracking-wider transition-colors relative py-1 ${(link === 'HOME' && activeSection === 'hero') || (link === 'LORE' && activeSection === 'lore')
+                  ? 'text-white font-black'
+                  : 'text-[#c6e3ff] hover:text-white'
+                  }`}
               >
                 {link}
-                {link === 'HOME' && (
+                {((link === 'HOME' && activeSection === 'hero') || (link === 'LORE' && activeSection === 'lore')) && (
                   <motion.div
                     layoutId="activeNavBorder"
                     className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#0088cc] rounded-full"
@@ -109,17 +185,8 @@ export default function Hero() {
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
             <a
-              href="https://t.me/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 border-2 border-[#0088cc] rounded-xl text-sm font-sans font-extrabold tracking-wider text-[#0088cc] hover:bg-[#0088cc]/10 hover:text-white hover:border-white transition-all duration-300"
-            >
-              <Send className="w-4 h-4 -rotate-45" />
-              JOIN TELEGRAM
-            </a>
-            <a
               href="#buy"
-              className="flex items-center gap-2 px-4 py-2 bg-[#0088cc] hover:bg-[#0099e6] rounded-xl text-sm font-sans font-extrabold tracking-wider text-white shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 border-b-4 border-[#005580]"
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#0088cc] hover:bg-[#0099e6] rounded-xl text-sm font-sans font-extrabold tracking-wider text-white shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 border-b-4 border-[#005580]"
             >
               <Send className="w-4 h-4 -rotate-45" />
               BUY POMBO
@@ -144,7 +211,7 @@ export default function Hero() {
             exit={{ opacity: 0, y: -20 }}
             className="absolute top-full left-0 w-full bg-[#0a1e3d]/95 backdrop-blur-lg border-b border-white/10 px-4 py-6 flex flex-col gap-4 z-50"
           >
-            {['HOME', 'ABOUT', 'TOKENOMICS', 'ROADMAP', 'HOW TO BUY', 'FAQ'].map((link) => (
+            {['HOME', 'LORE', 'ABOUT', 'TOKENOMICS'].map((link) => (
               <a
                 key={link}
                 href={`#${link.toLowerCase().replace(/\s+/g, '-')}`}
@@ -155,15 +222,6 @@ export default function Hero() {
               </a>
             ))}
             <div className="flex flex-col gap-3 mt-4">
-              <a
-                href="https://t.me/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-3 border-2 border-[#0088cc] rounded-xl text-sm font-sans font-extrabold tracking-wider text-[#0088cc]"
-              >
-                <Send className="w-4 h-4 -rotate-45" />
-                JOIN TELEGRAM
-              </a>
               <a
                 href="#buy"
                 onClick={() => setMobileMenuOpen(false)}
@@ -178,156 +236,319 @@ export default function Hero() {
         )}
       </motion.header>
 
-      {/* Main Hero Body */}
-      <div className="relative flex-grow flex items-center px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-14 max-w-7xl mx-auto w-full z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
-          
-          {/* Left Column - Content */}
-          <motion.div
-            className="lg:col-span-6 flex flex-col items-start text-left"
-            variants={staggerContainer}
-            initial="initial"
-            animate={stage === 'ready' ? 'animate' : 'initial'}
-          >
-            <motion.h1
-              variants={fadeInUp}
-              className="font-display text-white text-7xl sm:text-8xl md:text-[8.5rem] leading-[0.85] tracking-wide mb-6 select-none text-stroke-pombo"
-            >
-              POMBO
-            </motion.h1>
+      {/* Hero Section */}
+      <section
+        id="hero"
+        className="relative w-full min-h-[82vh] lg:min-h-[88vh] flex flex-col justify-between bg-cover bg-center"
+        style={{ backgroundImage: "url('/hero bg.png')" }}
+      >
+        {/* Dark overlay at top for navigation contrast */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0f2347]/60 via-transparent to-[#0a1e3d]/30 pointer-events-none" />
 
-            <motion.div variants={fadeInUp} className="flex flex-col gap-1 mb-8">
-              <span className="font-sans font-black text-xl sm:text-2xl md:text-3xl text-white tracking-wider uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                YOUR TRUSTED CARRIER PIGEON
-              </span>
-              <span className="font-sans font-black text-xl sm:text-2xl md:text-3xl text-[#9ed3ff] tracking-wider uppercase flex items-center gap-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                ON 
-                <Image src="/ton logo.png" alt="TON" width={28} height={28} className="inline-block animate-pulse" />
-                TON BLOCKCHAIN
-              </span>
+        {/* Main Hero Body */}
+        <div className="relative flex-grow flex items-center px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-14 max-w-7xl mx-auto w-full z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
+            {/* Left Column - Content */}
+            <motion.div
+              className="lg:col-span-6 flex flex-col items-start text-left"
+              variants={staggerContainer}
+              initial="initial"
+              animate={stage === 'ready' ? 'animate' : 'initial'}
+            >
+              <motion.h1
+                variants={fadeInUp}
+                className="font-display text-white text-7xl sm:text-8xl md:text-[8.5rem] leading-[0.85] tracking-wide mb-6 select-none text-stroke-pombo"
+              >
+                POMBO
+              </motion.h1>
+
+              <motion.div variants={fadeInUp} className="flex flex-col gap-1 mb-8">
+                <span className="font-sans font-black text-xl sm:text-2xl md:text-3xl text-white tracking-wider uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                  YOUR TRUSTED CARRIER PIGEON
+                </span>
+                <span className="font-sans font-black text-xl sm:text-2xl md:text-3xl text-[#9ed3ff] tracking-wider uppercase flex items-center gap-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                  ON
+                  <Image src="/ton logo.png" alt="TON" width={28} height={28} className="inline-block animate-pulse" />
+                  TON BLOCKCHAIN
+                </span>
+              </motion.div>
+
+              {/* Blue Divider Line */}
+              <motion.div
+                variants={fadeInUp}
+                className="w-full max-w-[420px] h-[2px] bg-gradient-to-r from-[#0088cc]/80 to-transparent mb-8"
+              />
+
+              {/* Tagline */}
+              <motion.p
+                variants={fadeInUp}
+                className="font-sans italic font-black text-2xl sm:text-3xl text-[#12396b] tracking-wide mb-10 leading-snug drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]"
+              >
+                My duty is to deliver.<br />And deliver I shall.
+              </motion.p>
+
+              {/* Interactive Buy/Join buttons */}
+              <motion.div
+                variants={fadeInUp}
+                className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-10"
+              >
+                <a
+                  href="#buy"
+                  className="flex items-center justify-center gap-3 px-8 py-4 bg-[#0088cc] hover:bg-[#0099e6] rounded-2xl text-base font-sans font-extrabold tracking-wider text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 border-b-4 border-[#005580]"
+                >
+                  <Send className="w-5 h-5 -rotate-45" />
+                  BUY POMBO
+                  <Image src="/ton logo.png" alt="TON Logo" width={20} height={20} />
+                </a>
+                <a
+                  href="https://t.me/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#0088cc] hover:text-[#0077b3] rounded-2xl text-base font-sans font-extrabold tracking-wider border-b-4 border-[#cbd5e1] hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_4px_0_#94a3b8] hover:translate-y-[2px]"
+                >
+                  <Send className="w-5 h-5 -rotate-45" />
+                  JOIN TELEGRAM
+                </a>
+              </motion.div>
+
+              {/* Contract Address Card */}
+              <motion.div
+                variants={fadeInUp}
+                className="w-full max-w-[480px] bg-[#0c1f3c]/60 backdrop-blur-md border border-[#1b3d6c]/50 rounded-2xl p-4 sm:p-5 mb-8 shadow-2xl relative overflow-hidden group"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] font-sans font-black tracking-widest text-[#9ed3ff]/80">CONTRACT ADDRESS</span>
+                  <div className="flex items-center justify-between gap-3 bg-[#061225]/80 border border-[#16335a] rounded-xl px-3 py-2">
+                    <span className="font-mono text-xs text-white/90 truncate select-all">{contractAddress}</span>
+                    <button
+                      onClick={copyToClipboard}
+                      className="p-2 hover:bg-white/10 rounded-lg text-[#9ed3ff] hover:text-white transition-colors focus:outline-none"
+                      title="Copy Address"
+                    >
+                      {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Social Icons */}
+              <motion.div
+                variants={fadeInUp}
+                className="flex items-center gap-4"
+              >
+                <a
+                  href="https://t.me/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full bg-white text-[#0088cc] hover:bg-[#0088cc] hover:text-white flex items-center justify-center shadow-lg border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-90"
+                >
+                  <TelegramIcon />
+                </a>
+                <a
+                  href="https://x.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full bg-white text-black hover:bg-black hover:text-white flex items-center justify-center shadow-lg border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-90"
+                >
+                  <XIcon />
+                </a>
+                <a
+                  href="https://ton.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full bg-white text-[#0088cc] hover:bg-sky-50 flex items-center justify-center shadow-lg border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-90 p-[10px]"
+                >
+                  <Image src="/ton logo.png" alt="TON" width={24} height={24} />
+                </a>
+                <a
+                  href="https://dextools.io/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full bg-white text-[#0088cc] hover:bg-sky-50 flex items-center justify-center shadow-lg border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-90"
+                >
+                  <BarChart3 className="w-5 h-5 text-[#0088cc]" />
+                </a>
+              </motion.div>
             </motion.div>
 
-            {/* Blue Divider Line */}
-            <motion.div
-              variants={fadeInUp}
-              className="w-full max-w-[420px] h-[2px] bg-gradient-to-r from-[#0088cc]/80 to-transparent mb-8"
-            />
+            {/* Right Column - Placeholder to reserve space on desktop */}
+            <div className="lg:col-span-6 relative w-full h-[320px] sm:h-[420px] lg:h-[550px] flex items-center justify-center pointer-events-none">
+              {/* Ambient background glow for pigeon */}
+              <div className="absolute w-[80%] h-[80%] rounded-full bg-[#0088cc]/10 blur-[100px] pointer-events-none" />
+            </div>
+          </div>
+        </div>
 
-            {/* Tagline */}
-            <motion.p
-              variants={fadeInUp}
-              className="font-sans italic font-black text-2xl sm:text-3xl text-[#12396b] tracking-wide mb-10 leading-snug drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]"
+        {/* Wooden Signpost - Attached to bottom right corner of Hero section, hidden on mobile */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5, y: 50 }}
+          animate={stage === 'ready' && activeSection === 'hero' ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.5, y: 50 }}
+          transition={{ type: 'spring', stiffness: 80, damping: 15 }}
+          className="absolute right-4 bottom-0 md:right-8 z-30 w-[130px] md:w-[160px] lg:w-[185px] hidden md:flex flex-col items-center select-none"
+        >
+          {/* The stack of planks */}
+          <div className="flex flex-col items-center gap-1.5 w-full relative z-10">
+            {/* Plank 1 */}
+            <div
+              className="w-full bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[-1.5deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
+              style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
             >
-              My duty is to deliver.<br />And deliver I shall.
-            </motion.p>
+              <span className="font-display text-white text-sm md:text-base lg:text-lg tracking-wider drop-shadow-[0_2px_0_#44250e]">FAST.</span>
+            </div>
 
-            {/* Interactive Buy/Join buttons */}
-            <motion.div
-              variants={fadeInUp}
-              className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-10"
+            {/* Plank 2 */}
+            <div
+              className="w-[95%] bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[1deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
+              style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
             >
-              <a
-                href="#buy"
-                className="flex items-center justify-center gap-3 px-8 py-4 bg-[#0088cc] hover:bg-[#0099e6] rounded-2xl text-base font-sans font-extrabold tracking-wider text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 border-b-4 border-[#005580]"
-              >
-                <Send className="w-5 h-5 -rotate-45" />
-                BUY POMBO
-                <Image src="/ton logo.png" alt="TON Logo" width={20} height={20} />
-              </a>
-              <a
-                href="https://t.me/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#0088cc] hover:text-[#0077b3] rounded-2xl text-base font-sans font-extrabold tracking-wider border-b-4 border-[#cbd5e1] hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_4px_0_#94a3b8] hover:translate-y-[2px]"
-              >
-                <Send className="w-5 h-5 -rotate-45" />
-                JOIN TELEGRAM
-              </a>
-            </motion.div>
+              <span className="font-display text-white text-sm md:text-base lg:text-lg tracking-wider drop-shadow-[0_2px_0_#44250e]">RELIABLE.</span>
+            </div>
 
-            {/* Contract Address Card */}
-            <motion.div
-              variants={fadeInUp}
-              className="w-full max-w-[480px] bg-[#0c1f3c]/60 backdrop-blur-md border border-[#1b3d6c]/50 rounded-2xl p-4 sm:p-5 mb-8 shadow-2xl relative overflow-hidden group"
+            {/* Plank 3 */}
+            <div
+              className="w-full bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[-2deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
+              style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-              <div className="flex flex-col gap-2">
-                <span className="text-[10px] font-sans font-black tracking-widest text-[#9ed3ff]/80">CONTRACT ADDRESS</span>
-                <div className="flex items-center justify-between gap-3 bg-[#061225]/80 border border-[#16335a] rounded-xl px-3 py-2">
-                  <span className="font-mono text-xs text-white/90 truncate select-all">{contractAddress}</span>
-                  <button
-                    onClick={copyToClipboard}
-                    className="p-2 hover:bg-white/10 rounded-lg text-[#9ed3ff] hover:text-white transition-colors focus:outline-none"
-                    title="Copy Address"
-                  >
-                    {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                  </button>
+              <span className="font-display text-white text-xs md:text-sm lg:text-base tracking-wider drop-shadow-[0_2px_0_#44250e]">DECENTRALIZED.</span>
+            </div>
+
+            {/* Plank 4 */}
+            <div
+              className="w-[105%] bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[1.5deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
+              style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
+            >
+              <span className="font-display text-[#9ed3ff] text-[10px] md:text-xs lg:text-sm tracking-wider drop-shadow-[0_2px_0_#44250e]">POMBO DELIVERS.</span>
+            </div>
+          </div>
+
+          {/* Wooden Post */}
+          <div className="w-3.5 h-12 md:h-16 bg-[#44250e] border-x-[2px] border-b-[2px] border-[#291405] shadow-[inset_-2px_0_0_rgba(255,255,255,0.1),_0_4px_0_rgba(0,0,0,0.2)] mt-[-4px]" />
+        </motion.div>
+      </section>
+
+      {/* Lore Section */}
+      <section
+        id="lore"
+        className="relative w-full min-h-[85vh] py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#0f2a5c] text-white flex items-center justify-center overflow-hidden border-t border-white/5"
+      >
+        <div className="relative max-w-7xl mx-auto w-full z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
+
+            {/* Left Column - Empty Placeholder for the Mirrored Pigeon Video */}
+            <div className="lg:col-span-6 relative w-full h-[320px] sm:h-[420px] lg:h-[550px] flex items-center justify-center pointer-events-none">
+              {/* Ambient background glow for pigeon */}
+              <div className="absolute w-[80%] h-[80%] rounded-full bg-[#0088cc]/10 blur-[100px] pointer-events-none" />
+            </div>
+
+            {/* Right Column - Lore Text Content */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ type: 'spring', stiffness: 80, damping: 15 }}
+              className="lg:col-span-6 flex flex-col items-start text-left"
+            >
+              <span className="font-sans font-black text-xs sm:text-sm tracking-widest text-[#9ed3ff] mb-2 uppercase flex items-center gap-1.5">
+                🐦 THE MISSING PIGEON OF TELEGRAM CULTURE
+              </span>
+              <h2 className="font-display text-white text-5xl sm:text-6xl md:text-7xl mb-8 leading-[0.9] select-none text-stroke-pombo-sm">
+                $POMBO
+              </h2>
+
+              <div className="font-sans text-[#c6e3ff] text-base sm:text-lg leading-relaxed font-medium space-y-6 max-w-xl">
+                <p>
+                  Pavel Durov loves pigeons, he loves what they represent.
+                </p>
+                <p>
+                  Before the paper plane, there were pigeons.
+                </p>
+                <p>
+                  Telegram is the modern messenger. Pigeons were the original messengers:{' '}
+                  <span className="font-black text-white">autonomous, resilient</span> and built to deliver messages across distance.
+                </p>
+                <p>
+                  That is why <span className="font-display text-white tracking-wide text-lg text-stroke-pombo-header select-none">POMBO</span> fits.
+                </p>
+                <p>
+                  $POMBO brings in one of the most recognizable pigeon-like birds on the internet: the{' '}
+                  <span className="font-black text-white">deadpan WhatsApp bird</span>. 🐦
+                </p>
+                <p>
+                  Officially, Unicode calls it <span className="font-bold text-white">🐦 Bird</span>. Visually, everyone reads it as a weird pigeon/birb. In Portuguese,{' '}
+                  <span className="font-black text-white italic">Pombo</span> literally means pigeon.
+                </p>
+                <p>
+                  But $POMBO is not only about the messenger analogy. That is just the foundation.
+                </p>
+                <p>
+                  The real edge is that Pombo already works as{' '}
+                  <span className="font-black text-white">internet culture</span>.
+                </p>
+                <p className="border-l-4 border-[#0088cc] pl-4 italic text-white font-bold my-4 bg-[#0a1e3d]/40 py-3 rounded-r-xl shadow-inner border-y border-r border-[#1b3d6c]/40">
+                  Pombo is the face of:<br />
+                  “I don’t know what is happening, but I’m witnessing it. 🐦”
+                </p>
+                <p className="flex flex-wrap gap-x-3 gap-y-1 text-sm sm:text-base font-extrabold text-[#9ed3ff] py-1">
+                  <span>Funny but serious.</span>
+                  <span>•</span>
+                  <span>Serious but stupid.</span>
+                  <span>•</span>
+                  <span>Sarcasm with a straight face.</span>
+                </p>
+                <p>
+                  Telegram never had a famous pigeon. WhatsApp accidentally did. So Pombo picked a side. 🐦
+                </p>
+              </div>
+
+              {/* Lore Contract Address Card */}
+              <div className="w-full max-w-[480px] bg-[#0c1f3c]/60 backdrop-blur-md border border-[#1b3d6c]/50 rounded-2xl p-4 sm:p-5 mt-8 shadow-2xl relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] font-sans font-black tracking-widest text-[#9ed3ff]/80">CONTRACT ADDRESS</span>
+                  <div className="flex items-center justify-between gap-3 bg-[#061225]/80 border border-[#16335a] rounded-xl px-3 py-2">
+                    <span className="font-mono text-xs text-white/90 truncate select-all">{contractAddress}</span>
+                    <button
+                      onClick={copyToClipboard}
+                      className="p-2 hover:bg-white/10 rounded-lg text-[#9ed3ff] hover:text-white transition-colors focus:outline-none"
+                      title="Copy Address"
+                    >
+                      {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>
 
-            {/* Social Icons */}
-            <motion.div
-              variants={fadeInUp}
-              className="flex items-center gap-4"
-            >
-              <a
-                href="https://t.me/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-12 h-12 rounded-full bg-white text-[#0088cc] hover:bg-[#0088cc] hover:text-white flex items-center justify-center shadow-lg border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-90"
-              >
-                <TelegramIcon />
-              </a>
-              <a
-                href="https://x.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-12 h-12 rounded-full bg-white text-black hover:bg-black hover:text-white flex items-center justify-center shadow-lg border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-90"
-              >
-                <XIcon />
-              </a>
-              <a
-                href="https://ton.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-12 h-12 rounded-full bg-white text-[#0088cc] hover:bg-sky-50 flex items-center justify-center shadow-lg border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-90 p-[10px]"
-              >
-                <Image src="/ton logo.png" alt="TON" width={24} height={24} />
-              </a>
-              <a
-                href="https://dextools.io/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-12 h-12 rounded-full bg-white text-[#0088cc] hover:bg-sky-50 flex items-center justify-center shadow-lg border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-90"
-              >
-                <BarChart3 className="w-5 h-5 text-[#0088cc]" />
-              </a>
-            </motion.div>
-          </motion.div>
-
-          {/* Right Column - Placeholder to reserve space on desktop */}
-          <div className="lg:col-span-6 relative w-full h-[320px] sm:h-[420px] lg:h-[550px] flex items-center justify-center pointer-events-none">
-            {/* Ambient background glow for pigeon */}
-            <div className="absolute w-[80%] h-[80%] rounded-full bg-[#0088cc]/10 blur-[100px] pointer-events-none" />
           </div>
-
         </div>
-      </div>
+      </section>
 
-      {/* Floating Pigeon WebM Video - Absolute positioned relative to section to avoid layout jitter */}
+      {/* Floating Pigeon WebM Video - Absolute positioned relative to section wrapper to avoid layout jitter */}
       <motion.div
         layout
         layoutId="hero-bird-video"
         transition={{
           layout: { type: 'spring', stiffness: 50, damping: 14 },
+          scaleX: { type: 'spring', stiffness: 60, damping: 15 },
           y: stage === 'ready' ? { repeat: Infinity, duration: 6, ease: 'easeInOut' } : undefined
         }}
-        animate={stage === 'ready' ? { y: [0, -15, 0] } : {}}
+        animate={
+          stage === 'ready'
+            ? {
+              y: [0, -15, 0],
+              scaleX: activeSection === 'hero' ? 1 : -1,
+            }
+            : {
+              scaleX: 1,
+            }
+        }
         className={
-            stage === 'loading'
-            ? "absolute left-1/2 top-[42%] md:top-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-[290px] sm:w-[400px] md:w-[500px] lg:w-[650px] scale-[1.85] pointer-events-none select-none origin-center"
-            : "absolute left-1/2 top-[76%] lg:top-[50%] lg:left-[73%] -translate-x-1/2 -translate-y-1/2 z-20 w-[260px] sm:w-[320px] md:w-[440px] lg:w-[580px] xl:w-[680px] lg:scale-[1.25] xl:scale-[1.35] pointer-events-none select-none origin-center"
+          stage === 'loading'
+            ? "absolute left-1/2 top-[42%] md:top-[25%] -translate-x-1/2 -translate-y-1/2 z-40 w-[240px] sm:w-[400px] md:w-[500px] lg:w-[650px] scale-[1.85] pointer-events-none select-none origin-center"
+            : activeSection === 'hero'
+              ? "absolute left-1/2 top-[28%] md:top-[25%] lg:top-[25%] lg:left-[73%] -translate-x-1/2 -translate-y-1/2 z-20 w-[260px] sm:w-[320px] md:w-[440px] lg:w-[580px] xl:w-[680px] lg:scale-[1.25] xl:scale-[1.35] pointer-events-none select-none origin-center"
+              : "absolute left-1/2 top-[78%] lg:top-[75%] lg:left-[27%] -translate-x-1/2 -translate-y-1/2 z-20 w-[260px] sm:w-[320px] md:w-[440px] lg:w-[580px] xl:w-[680px] lg:scale-[1.25] xl:scale-[1.35] pointer-events-none select-none origin-center"
         }
       >
         <video
@@ -342,51 +563,6 @@ export default function Hero() {
         />
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.5, y: 50 }}
-        animate={stage === 'ready' ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.5, y: 50 }}
-        transition={{ type: 'spring', stiffness: 80, damping: 15 }}
-        className="absolute right-4 bottom-0 md:right-8 z-30 w-[130px] md:w-[160px] lg:w-[185px] hidden md:flex flex-col items-center select-none"
-      >
-        {/* The stack of planks */}
-        <div className="flex flex-col items-center gap-1.5 w-full relative z-10">
-          {/* Plank 1 */}
-          <div
-            className="w-full bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[-1.5deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
-            style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
-          >
-            <span className="font-display text-white text-sm md:text-base lg:text-lg tracking-wider drop-shadow-[0_2px_0_#44250e]">FAST.</span>
-          </div>
-
-          {/* Plank 2 */}
-          <div
-            className="w-[95%] bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[1deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
-            style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
-          >
-            <span className="font-display text-white text-sm md:text-base lg:text-lg tracking-wider drop-shadow-[0_2px_0_#44250e]">RELIABLE.</span>
-          </div>
-
-          {/* Plank 3 */}
-          <div
-            className="w-full bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[-2deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
-            style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
-          >
-            <span className="font-display text-white text-xs md:text-sm lg:text-base tracking-wider drop-shadow-[0_2px_0_#44250e]">DECENTRALIZED.</span>
-          </div>
-
-          {/* Plank 4 */}
-          <div
-            className="w-[105%] bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[1.5deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
-            style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
-          >
-            <span className="font-display text-[#9ed3ff] text-[10px] md:text-xs lg:text-sm tracking-wider drop-shadow-[0_2px_0_#44250e]">POMBO DELIVERS.</span>
-          </div>
-        </div>
-
-        {/* Wooden Post */}
-        <div className="w-3.5 h-12 md:h-16 bg-[#44250e] border-x-[2px] border-b-[2px] border-[#291405] shadow-[inset_-2px_0_0_rgba(255,255,255,0.1),_0_4px_0_rgba(0,0,0,0.2)] mt-[-4px]" />
-      </motion.div>
-
       {/* SVG Erode Filter to shave off 1.2px transparent video black alpha-fringe outline */}
       <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
         <defs>
@@ -396,6 +572,6 @@ export default function Hero() {
           </filter>
         </defs>
       </svg>
-    </section>
+    </div>
   )
 }
