@@ -26,21 +26,12 @@ export default function Hero() {
   const [stage, setStage] = useState<'loading' | 'transitioning' | 'ready'>('loading')
   const [activeSection, setActiveSection] = useState<'hero' | 'lore'>('hero')
   const [isDesktop, setIsDesktop] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 1024)
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20)
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   const { scrollY } = useScroll()
@@ -72,7 +63,7 @@ export default function Hero() {
   const top = useTransform(
     smoothScrollY,
     [0, 650],
-    [isDesktop ? "50%" : "72%", isDesktop ? "32%" : "20%"]
+    [isDesktop ? "50%" : "72%", isDesktop ? "20%" : "8%"]
   )
 
   useEffect(() => {
@@ -145,7 +136,7 @@ export default function Hero() {
         animate={stage === 'ready' ? { y: 0, opacity: 1 } : { y: -100, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 100, damping: 20 }}
         className={`sticky top-0 w-full z-50 py-4 px-4 sm:px-6 lg:px-8 transition-all duration-300 ${
-          scrolled
+          activeSection === 'lore'
             ? 'backdrop-blur-md border-b border-white/10 bg-[#061225]/70'
             : 'bg-transparent border-b border-transparent'
         }`}
@@ -434,7 +425,7 @@ export default function Hero() {
       >
         <div className="relative max-w-7xl mx-auto w-full z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
-
+            
             {/* Left Column - Empty Placeholder for the Mirrored Pigeon Video */}
             <div className="lg:col-span-6 relative w-full h-[320px] sm:h-[420px] lg:h-[550px] flex items-center justify-center pointer-events-none">
               {/* Ambient background glow for pigeon */}
@@ -450,7 +441,7 @@ export default function Hero() {
               className="lg:col-span-6 flex flex-col items-start text-left"
             >
               <span className="font-sans font-black text-xs sm:text-sm tracking-widest text-[#9ed3ff] mb-2 uppercase flex items-center gap-1.5">
-                🐦 THE MISSING PIGEON OF TELEGRAM CULTURE
+                THE MISSING PIGEON OF TELEGRAM CULTURE
               </span>
               <h2 className="font-display text-white text-5xl sm:text-6xl md:text-7xl mb-8 leading-[0.9] select-none text-stroke-pombo-sm">
                 $POMBO
@@ -472,10 +463,10 @@ export default function Hero() {
                 </p>
                 <p>
                   $POMBO brings in one of the most recognizable pigeon-like birds on the internet: the{' '}
-                  <span className="font-black text-white">deadpan WhatsApp bird</span>. 🐦
+                  <span className="font-black text-white">deadpan WhatsApp bird</span>.
                 </p>
                 <p>
-                  Officially, Unicode calls it <span className="font-bold text-white">🐦 Bird</span>. Visually, everyone reads it as a weird pigeon/birb. In Portuguese,{' '}
+                  Officially, Unicode calls it <span className="font-bold text-white">Bird</span>. Visually, everyone reads it as a weird pigeon/birb. In Portuguese,{' '}
                   <span className="font-black text-white italic">Pombo</span> literally means pigeon.
                 </p>
                 <p>
@@ -487,7 +478,7 @@ export default function Hero() {
                 </p>
                 <p className="border-l-4 border-[#0088cc] pl-4 italic text-white font-bold my-4 bg-[#0a1e3d]/40 py-3 rounded-r-xl shadow-inner border-y border-r border-[#1b3d6c]/40">
                   Pombo is the face of:<br />
-                  “I don’t know what is happening, but I’m witnessing it. 🐦”
+                  “I don’t know what is happening, but I’m witnessing it.”
                 </p>
                 <p className="flex flex-wrap gap-x-3 gap-y-1 text-sm sm:text-base font-extrabold text-[#9ed3ff] py-1">
                   <span>Funny but serious.</span>
@@ -497,26 +488,8 @@ export default function Hero() {
                   <span>Sarcasm with a straight face.</span>
                 </p>
                 <p>
-                  Telegram never had a famous pigeon. WhatsApp accidentally did. So Pombo picked a side. 🐦
+                  Telegram never had a famous pigeon. WhatsApp accidentally did. So Pombo picked a side.
                 </p>
-              </div>
-
-              {/* Lore Contract Address Card */}
-              <div className="w-full max-w-[480px] bg-[#0c1f3c]/60 backdrop-blur-md border border-[#1b3d6c]/50 rounded-2xl p-4 sm:p-5 mt-8 shadow-2xl relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
-                <div className="flex flex-col gap-2">
-                  <span className="text-[10px] font-sans font-black tracking-widest text-[#9ed3ff]/80">CONTRACT ADDRESS</span>
-                  <div className="flex items-center justify-between gap-3 bg-[#061225]/80 border border-[#16335a] rounded-xl px-3 py-2">
-                    <span className="font-mono text-xs text-white/90 truncate select-all">{contractAddress}</span>
-                    <button
-                      onClick={copyToClipboard}
-                      className="p-2 hover:bg-white/10 rounded-lg text-[#9ed3ff] hover:text-white transition-colors focus:outline-none"
-                      title="Copy Address"
-                    >
-                      {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
               </div>
             </motion.div>
 
