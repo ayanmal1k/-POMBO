@@ -23,6 +23,24 @@ export default function Hero() {
   const [copied, setCopied] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const contractAddress = 'EQAme5Z3_wsVhvSemTvwFToq2AIRz_NSFediKOgdl8H11EPh'
+  const [stage, setStage] = useState<'loading' | 'transitioning' | 'ready'>('loading')
+
+  useEffect(() => {
+    // Show bird centered for 1.8 seconds
+    const timer1 = setTimeout(() => {
+      setStage('transitioning')
+    }, 1800)
+
+    // After transition starts, wait 1.2 seconds for layout animation to finish, then reveal rest
+    const timer2 = setTimeout(() => {
+      setStage('ready')
+    }, 3000)
+
+    return () => {
+      clearTimeout(timer1)
+      clearTimeout(timer2)
+    }
+  }, [])
 
 
   const copyToClipboard = () => {
@@ -46,12 +64,17 @@ export default function Hero() {
 
 
   return (
-    <section className="relative w-full min-h-[82vh] lg:min-h-[88vh] flex flex-col justify-between bg-cover bg-center overflow-x-hidden" style={{ backgroundImage: "url('/hero bg.png')" }}>
+    <section className="relative w-full min-h-[82vh] lg:min-h-[88vh] flex flex-col justify-between bg-cover bg-center overflow-hidden" style={{ backgroundImage: "url('/hero bg.png')" }}>
       {/* Dark overlay at top for navigation contrast */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0f2347]/60 via-transparent to-[#0a1e3d]/30 pointer-events-none" />
 
       {/* Header / Navbar */}
-      <header className="relative w-full z-50 backdrop-blur-md border-b border-white/10 bg-white/5 py-4 px-4 sm:px-6 lg:px-8">
+      <motion.header
+        initial={{ y: -100, opacity: 0 }}
+        animate={stage === 'ready' ? { y: 0, opacity: 1 } : { y: -100, opacity: 0 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+        className="relative w-full z-50 backdrop-blur-md border-b border-white/10 bg-white/5 py-4 px-4 sm:px-6 lg:px-8"
+      >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
@@ -153,7 +176,7 @@ export default function Hero() {
             </div>
           </motion.div>
         )}
-      </header>
+      </motion.header>
 
       {/* Main Hero Body */}
       <div className="relative flex-grow flex items-center px-4 sm:px-6 lg:px-8 py-8 md:py-12 lg:py-14 max-w-7xl mx-auto w-full z-10">
@@ -164,7 +187,7 @@ export default function Hero() {
             className="lg:col-span-6 flex flex-col items-start text-left"
             variants={staggerContainer}
             initial="initial"
-            animate="animate"
+            animate={stage === 'ready' ? 'animate' : 'initial'}
           >
             <motion.h1
               variants={fadeInUp}
@@ -283,50 +306,46 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Right Column - Visual (Pigeon Video) */}
-          <div className="lg:col-span-6 relative w-full flex flex-col items-center justify-center lg:overflow-visible">
-            
+          {/* Right Column - Placeholder to reserve space on desktop */}
+          <div className="lg:col-span-6 relative w-full h-[320px] sm:h-[420px] lg:h-[550px] flex items-center justify-center pointer-events-none">
             {/* Ambient background glow for pigeon */}
             <div className="absolute w-[80%] h-[80%] rounded-full bg-[#0088cc]/10 blur-[100px] pointer-events-none" />
-
-            {/* Floating Pigeon WebM Video */}
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{
-                y: [0, -15, 0],
-                opacity: 1,
-              }}
-              transition={{
-                y: {
-                  repeat: Infinity,
-                  duration: 6,
-                  ease: 'easeInOut',
-                },
-                opacity: { duration: 1 }
-              }}
-              className="w-full max-w-[750px] md:max-w-[850px] lg:max-w-[1000px] xl:max-w-[1100px] lg:scale-125 xl:scale-135 relative z-10 select-none"
-            >
-              <video
-                src="/hero.webm"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-auto object-contain pointer-events-none"
-                style={{ filter: 'url(#erode-filter) drop-shadow(0 20px 50px rgba(0,136,204,0.3))' }}
-                aria-hidden="true"
-              />
-            </motion.div>
-
           </div>
 
         </div>
       </div>
 
+      {/* Floating Pigeon WebM Video - Absolute positioned relative to section to avoid layout jitter */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
-        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-        transition={{ type: 'spring', delay: 0.4, stiffness: 80 }}
+        layout
+        layoutId="hero-bird-video"
+        transition={{
+          layout: { type: 'spring', stiffness: 50, damping: 14 },
+          y: stage === 'ready' ? { repeat: Infinity, duration: 6, ease: 'easeInOut' } : undefined
+        }}
+        animate={stage === 'ready' ? { y: [0, -15, 0] } : {}}
+        className={
+            stage === 'loading'
+            ? "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-[240px] sm:w-[400px] md:w-[500px] lg:w-[650px] scale-[1.85] pointer-events-none select-none origin-center"
+            : "absolute left-1/2 top-[76%] lg:top-[50%] lg:left-[73%] -translate-x-1/2 -translate-y-1/2 z-20 w-[220px] sm:w-[300px] md:w-[420px] lg:w-[580px] xl:w-[680px] lg:scale-[1.25] xl:scale-[1.35] pointer-events-none select-none origin-center"
+        }
+      >
+        <video
+          src="/hero.webm"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-auto object-contain"
+          style={{ filter: 'url(#erode-filter) drop-shadow(0 20px 50px rgba(0,136,204,0.3))' }}
+          aria-hidden="true"
+        />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5, y: 50 }}
+        animate={stage === 'ready' ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.5, y: 50 }}
+        transition={{ type: 'spring', stiffness: 80, damping: 15 }}
         className="absolute right-4 bottom-0 md:right-8 z-30 w-[130px] md:w-[160px] lg:w-[185px] hidden md:flex flex-col items-center select-none"
       >
         {/* The stack of planks */}
