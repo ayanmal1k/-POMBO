@@ -195,10 +195,22 @@ export default function MemesSection() {
                       </h3>
                       <div className="w-16 h-[2px] bg-[#0088cc]/50" />
                       <p className="font-sans text-[#c6e3ff] text-sm sm:text-base md:text-lg leading-relaxed font-semibold">
-                        Before $POMBO became a token, he was the legendary, deadpan WhatsApp pigeon. In internet culture, this old emoji was the face of silent judgment—sarcasm with a straight face.
+                        Pombo is not a random bird drawing.
                       </p>
                       <p className="font-sans text-[#c6e3ff] text-sm sm:text-base md:text-lg leading-relaxed font-semibold">
-                        Pavel Durov built Telegram on pigeons, but WhatsApp accidentally created the ultimate meme bird. $POMBO unites them. We are 100% about the memes, the community, and the legacy of the carrier pigeons who delivered before the paper plane ever flew.
+                        The WhatsApp emoji set was created by{' '}
+                        <a
+                          href="https://design.iconfactory.com/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white font-black underline underline-offset-2 decoration-[#0088cc] hover:text-[#9ed3ff] transition-colors"
+                        >
+                          The Iconfactory
+                        </a>
+                        , a legendary design studio that helped shape digital visual culture for decades.
+                      </p>
+                      <p className="font-sans text-[#c6e3ff] text-sm sm:text-base md:text-lg leading-relaxed font-semibold">
+                        They worked on emoji sets for WhatsApp, Twitter and Facebook Messenger, created Twitterrific — one of the most influential early Twitter clients — and even produced visual/icon work for Windows XP, one of the most recognizable operating systems in internet history.
                       </p>
                       <div className="flex items-center gap-2 text-xs sm:text-sm font-extrabold text-[#9ed3ff] bg-[#061225]/60 px-4 py-2 rounded-xl border border-white/5">
                         <span>STILL DELIVERING MEMES</span>
