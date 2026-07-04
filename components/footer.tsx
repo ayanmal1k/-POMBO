@@ -53,17 +53,6 @@ export default function Footer() {
         }
       )
 
-      // Logo bounce idle
-      const logo = footer.querySelector('.footer-logo')
-      if (logo) {
-        gsap.to(logo, {
-          y: -6,
-          duration: 2,
-          ease: 'sine.inOut',
-          yoyo: true,
-          repeat: -1,
-        })
-      }
     }, footer)
 
     return () => ctx.revert()
