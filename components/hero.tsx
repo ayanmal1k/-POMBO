@@ -135,11 +135,10 @@ export default function Hero() {
         initial={{ y: -100, opacity: 0 }}
         animate={stage === 'ready' ? { y: 0, opacity: 1 } : { y: -100, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-        className={`sticky top-0 w-full z-50 py-4 px-4 sm:px-6 lg:px-8 transition-all duration-300 ${
-          activeSection === 'lore'
+        className={`sticky top-0 w-full z-50 py-4 px-4 sm:px-6 lg:px-8 transition-all duration-300 ${activeSection === 'lore'
             ? 'backdrop-blur-md border-b border-white/10 bg-[#061225]/70'
             : 'bg-transparent border-b border-transparent'
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
@@ -425,7 +424,7 @@ export default function Hero() {
       >
         <div className="relative max-w-7xl mx-auto w-full z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
-            
+
             {/* Left Column - Empty Placeholder for the Mirrored Pigeon Video */}
             <div className="lg:col-span-6 relative w-full h-[320px] sm:h-[420px] lg:h-[550px] flex items-center justify-center pointer-events-none">
               {/* Ambient background glow for pigeon */}
