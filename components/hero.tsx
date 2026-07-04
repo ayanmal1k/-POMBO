@@ -326,8 +326,8 @@ export default function Hero() {
         animate={stage === 'ready' ? { y: [0, -15, 0] } : {}}
         className={
             stage === 'loading'
-            ? "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-[240px] sm:w-[400px] md:w-[500px] lg:w-[650px] scale-[1.85] pointer-events-none select-none origin-center"
-            : "absolute left-1/2 top-[76%] lg:top-[50%] lg:left-[73%] -translate-x-1/2 -translate-y-1/2 z-20 w-[220px] sm:w-[300px] md:w-[420px] lg:w-[580px] xl:w-[680px] lg:scale-[1.25] xl:scale-[1.35] pointer-events-none select-none origin-center"
+            ? "absolute left-1/2 top-[42%] md:top-1/2 -translate-x-1/2 -translate-y-1/2 z-40 w-[290px] sm:w-[400px] md:w-[500px] lg:w-[650px] scale-[1.85] pointer-events-none select-none origin-center"
+            : "absolute left-1/2 top-[76%] lg:top-[50%] lg:left-[73%] -translate-x-1/2 -translate-y-1/2 z-20 w-[260px] sm:w-[320px] md:w-[440px] lg:w-[580px] xl:w-[680px] lg:scale-[1.25] xl:scale-[1.35] pointer-events-none select-none origin-center"
         }
       >
         <video
