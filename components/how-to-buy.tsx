@@ -356,7 +356,7 @@ export default function HowToBuy() {
             Ready to board?
           </p>
           <a
-            href="https://ston.fi"
+            href="https://dexscreener.com/ton/eqb1j6iiwcj1vkb1vcmyq74ydizo3reitgdj3myy5hy7mp5d"
             target="_blank"
             rel="noopener noreferrer"
             className="group relative inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-sans font-black text-base sm:text-lg text-white uppercase tracking-wider overflow-hidden transition-transform duration-200 hover:scale-105 active:scale-95"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -45,8 +45,24 @@ export default function MemesSection() {
   const containerRef = useRef<HTMLDivElement>(null)
   const galleryRef = useRef<HTMLDivElement>(null)
   const itemsRef = useRef<(HTMLDivElement | null)[]>([])
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
+    const updateIsMobile = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+
+    updateIsMobile()
+    window.addEventListener('resize', updateIsMobile)
+
+    return () => window.removeEventListener('resize', updateIsMobile)
+  }, [])
+
+  useEffect(() => {
+    if (isMobile) {
+      return
+    }
+
     gsap.registerPlugin(ScrollTrigger, Flip)
 
     let ctx: any
@@ -134,7 +150,7 @@ export default function MemesSection() {
       window.removeEventListener('load', handleStart)
       if (ctx) ctx.revert()
     }
-  }, [])
+  }, [isMobile])
 
   return (
     <section id="memes" className="w-full bg-[#061225] py-20 overflow-hidden relative border-t border-white/5">
@@ -142,7 +158,7 @@ export default function MemesSection() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#0088cc]/5 blur-[120px] pointer-events-none" />
 
       {/* Header Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-10 lg:mb-16 relative z-10">
         <span className="font-sans font-black text-xs sm:text-sm tracking-widest text-[#9ed3ff] mb-3 uppercase block">
           Pombo Meme Heritage
         </span>
@@ -185,7 +201,7 @@ export default function MemesSection() {
 
                 {/* Center Item Story Overlay */}
                 {isCenter && (
-                  <div className="meme-story-overlay absolute inset-0 bg-[#061225]/90 flex flex-col justify-center items-center p-6 sm:p-10 md:p-16 select-none">
+                  <div className="meme-story-overlay absolute inset-0 hidden md:flex bg-[#061225]/90 flex-col justify-center items-center p-6 sm:p-10 md:p-16 select-none">
                     <div className="max-w-2xl bg-[#0a1e3d]/85 backdrop-blur-md border border-[#0088cc]/30 rounded-3xl p-6 sm:p-10 md:p-12 shadow-[0_20px_50px_rgba(0,136,204,0.35)] text-center flex flex-col items-center gap-4 sm:gap-6 border-b-4 border-b-[#0088cc]">
                       <span className="bg-[#0088cc] text-white text-[10px] sm:text-xs font-black tracking-widest px-3 py-1 rounded-full uppercase">
                         Origin Story
@@ -223,6 +239,43 @@ export default function MemesSection() {
               </div>
             )
           })}
+        </div>
+      </div>
+
+      <div className="md:hidden max-w-7xl mx-auto px-4 sm:px-6 relative z-10 mt-8 mb-4">
+        <div className="rounded-3xl border border-white/10 bg-[#0a1e3d]/70 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.35)] p-5 sm:p-6">
+          <div className="text-center mb-4">
+            <span className="inline-flex items-center rounded-full bg-[#0088cc] px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white">
+              Origin Story
+            </span>
+            <h3 className="mt-4 font-display text-white text-3xl sm:text-4xl tracking-wide text-stroke-pombo-sm uppercase leading-none">
+              THE OLD EMOJI LEGACY
+            </h3>
+          </div>
+
+          <div className="space-y-4 font-sans text-[#c6e3ff] text-sm sm:text-base leading-relaxed font-semibold">
+            <p>Pombo is not a random bird drawing.</p>
+            <p>
+              The WhatsApp emoji set was created by{' '}
+              <a
+                href="https://design.iconfactory.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white font-black underline underline-offset-2 decoration-[#0088cc] hover:text-[#9ed3ff] transition-colors"
+              >
+                The Iconfactory
+              </a>
+              , a legendary design studio that helped shape digital visual culture for decades.
+            </p>
+            <p>
+              They worked on emoji sets for WhatsApp, Twitter and Facebook Messenger, created Twitterrific — one of the most influential early Twitter clients — and even produced visual/icon work for Windows XP, one of the most recognizable operating systems in internet history.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-[10px] sm:text-xs font-extrabold text-[#9ed3ff] bg-[#061225]/60 px-4 py-3 rounded-xl border border-white/5">
+              <span>STILL DELIVERING MEMES</span>
+              <span>•</span>
+              <span>SINCE THE OLD EMOJI DAYS</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

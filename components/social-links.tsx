@@ -141,19 +141,24 @@ export default function SocialLinks() {
       // Links stagger from right
       if (linksRef.current) {
         const cards = linksRef.current.querySelectorAll('.social-card')
-        gsap.from(cards, {
-          opacity: 0,
-          x: 80,
-          y: 20,
-          stagger: 0.12,
-          duration: 0.75,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: linksRef.current,
-            start: 'top 88%',
-            toggleActions: 'play none none reverse',
-          },
-        })
+        gsap.fromTo(
+          cards,
+          { opacity: 0, x: 80, y: 20 },
+          {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            stagger: 0.12,
+            duration: 0.75,
+            ease: 'power3.out',
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: linksRef.current,
+              start: 'top 88%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        )
       }
 
       // Price ticker
@@ -206,7 +211,7 @@ export default function SocialLinks() {
   return (
     <section
       ref={sectionRef}
-      id="community"
+      id="social"
       className="w-full relative overflow-hidden border-t border-white/5"
       style={{ backgroundImage: "url('/hero bg.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}
     >

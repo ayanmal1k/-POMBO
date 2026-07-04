@@ -24,8 +24,15 @@ export default function Hero() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const contractAddress = 'EQAme5Z3_wsVhvSemTvwFToq2AIRz_NSfEdiKOgdI8H11EPh'
   const [stage, setStage] = useState<'loading' | 'transitioning' | 'ready'>('loading')
-  const [activeSection, setActiveSection] = useState<'hero' | 'lore'>('hero')
+  const [activeSection, setActiveSection] = useState<'hero' | 'lore' | 'memes' | 'how-to-buy' | 'social'>('hero')
   const [isDesktop, setIsDesktop] = useState(false)
+  const navItems = [
+    { label: 'Home', href: '#hero', section: 'hero' as const },
+    { label: 'Lore', href: '#lore', section: 'lore' as const },
+    { label: 'Memes', href: '#memes', section: 'memes' as const },
+    { label: 'How to Buy', href: '#how-to-buy', section: 'how-to-buy' as const },
+    { label: 'Social', href: '#social', section: 'social' as const },
+  ]
 
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 1024)
@@ -84,25 +91,55 @@ export default function Hero() {
   }, [])
 
   useEffect(() => {
+    const root = document.documentElement
+    const body = document.body
+    const lockScroll = stage !== 'ready'
+
+    root.dataset.scrollLock = lockScroll ? 'true' : 'false'
+
+    if (!lockScroll) {
+      root.style.overflow = ''
+      body.style.overflow = ''
+      root.style.overscrollBehavior = ''
+      body.style.overscrollBehavior = ''
+      return
+    }
+
+    root.style.overflow = 'hidden'
+    body.style.overflow = 'hidden'
+    root.style.overscrollBehavior = 'none'
+    body.style.overscrollBehavior = 'none'
+
+    return () => {
+      delete root.dataset.scrollLock
+      root.style.overflow = ''
+      body.style.overflow = ''
+      root.style.overscrollBehavior = ''
+      body.style.overscrollBehavior = ''
+    }
+  }, [stage])
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setActiveSection(entry.target.id as 'hero' | 'lore')
+            setActiveSection(entry.target.id as 'hero' | 'lore' | 'memes' | 'how-to-buy' | 'social')
           }
         })
       },
       { threshold: 0.25 }
     )
 
-    const heroEl = document.getElementById('hero')
-    const loreEl = document.getElementById('lore')
-    if (heroEl) observer.observe(heroEl)
-    if (loreEl) observer.observe(loreEl)
+    const sections = ['hero', 'lore', 'memes', 'how-to-buy', 'social']
+    const observedSections = sections
+      .map((sectionId) => document.getElementById(sectionId))
+      .filter((element): element is HTMLElement => element !== null)
+
+    observedSections.forEach((element) => observer.observe(element))
 
     return () => {
-      if (heroEl) observer.unobserve(heroEl)
-      if (loreEl) observer.unobserve(loreEl)
+      observedSections.forEach((element) => observer.unobserve(element))
     }
   }, [])
 
@@ -151,21 +188,21 @@ export default function Hero() {
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8">
-            {['HOME', 'LORE', 'ABOUT', 'TOKENOMICS'].map((link) => (
+          <nav className="hidden md:flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2 py-1.5 backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
+            {navItems.map((item) => (
               <a
-                key={link}
-                href={`#${link.toLowerCase().replace(/\s+/g, '-')}`}
-                className={`text-sm font-sans font-extrabold tracking-wider transition-colors relative py-1 ${(link === 'HOME' && activeSection === 'hero') || (link === 'LORE' && activeSection === 'lore')
-                  ? 'text-white font-black'
-                  : 'text-[#c6e3ff] hover:text-white'
+                key={item.label}
+                href={item.href}
+                className={`relative rounded-full px-4 py-2 text-[11px] font-sans font-black uppercase tracking-[0.22em] transition-all duration-200 ${activeSection === item.section
+                  ? 'bg-[#0088cc] text-white shadow-[0_8px_24px_rgba(0,136,204,0.35)]'
+                  : 'text-[#c6e3ff] hover:bg-white/10 hover:text-white'
                   }`}
               >
-                {link}
-                {((link === 'HOME' && activeSection === 'hero') || (link === 'LORE' && activeSection === 'lore')) && (
+                {item.label}
+                {activeSection === item.section && (
                   <motion.div
                     layoutId="activeNavBorder"
-                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#0088cc] rounded-full"
+                    className="absolute inset-0 rounded-full border border-white/15"
                   />
                 )}
               </a>
@@ -178,10 +215,11 @@ export default function Hero() {
               href="https://dexscreener.com/ton/eqb1j6iiwcj1vkb1vcmyq74ydizo3reitgdj3myy5hy7mp5d"
               target="_blank"
               rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 rounded-full border border-[#0088cc]/40 bg-gradient-to-r from-[#0088cc] to-[#00b4d8] px-5 py-2.5 text-xs font-black uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,136,204,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(0,136,204,0.45)] active:translate-y-0"
             >
-              <Send className="w-4 h-4 -rotate-45" />
-              BUY POMBO
-              <Image src="/ton logo.png" alt="TON" width={16} height={16} />
+              <Send className="w-4 h-4 -rotate-45 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              Buy Now
+              <Image src="/ton logo.png" alt="TON" width={16} height={16} className="drop-shadow-sm" />
             </a>
           </div>
 
@@ -202,14 +240,17 @@ export default function Hero() {
             exit={{ opacity: 0, y: -20 }}
             className="absolute top-full left-0 w-full bg-[#0a1e3d]/95 backdrop-blur-lg border-b border-white/10 px-4 py-6 flex flex-col gap-4 z-50"
           >
-            {['HOME', 'LORE', 'ABOUT', 'TOKENOMICS'].map((link) => (
+            {navItems.map((item) => (
               <a
-                key={link}
-                href={`#${link.toLowerCase().replace(/\s+/g, '-')}`}
+                key={item.label}
+                href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-base font-sans font-extrabold tracking-wider text-[#c6e3ff] hover:text-white py-2 border-b border-white/5"
+                className={`rounded-2xl px-4 py-3 text-sm font-black uppercase tracking-[0.18em] transition-colors ${activeSection === item.section
+                  ? 'bg-white/10 text-white'
+                  : 'text-[#c6e3ff] hover:bg-white/5 hover:text-white'
+                  }`}
               >
-                {link}
+                {item.label}
               </a>
             ))}
             <div className="flex flex-col gap-3 mt-4">
@@ -217,9 +258,10 @@ export default function Hero() {
                 href="https://dexscreener.com/ton/eqb1j6iiwcj1vkb1vcmyq74ydizo3reitgdj3myy5hy7mp5d"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#0088cc]/40 bg-gradient-to-r from-[#0088cc] to-[#00b4d8] px-5 py-3 text-xs font-black uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,136,204,0.35)]"
               >
                 <Send className="w-4 h-4 -rotate-45" />
-                BUY POMBO
+                Buy Now
                 <Image src="/ton logo.png" alt="TON" width={16} height={16} />
               </a>
             </div>
