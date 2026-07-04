@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, Variants } from 'framer-motion'
 import { toast } from 'sonner'
 import Image from 'next/image'
@@ -23,6 +23,7 @@ export default function Hero() {
   const [copied, setCopied] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const contractAddress = 'EQAme5Z3_wsVhvSemTvwFToq2AIRz_NSFediKOgdl8H11EPh'
+
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(contractAddress)
@@ -282,8 +283,8 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Right Column - Visual (Pigeon Video + Signpost) */}
-          <div className="lg:col-span-6 relative w-full flex flex-col items-center justify-center">
+          {/* Right Column - Visual (Pigeon Video) */}
+          <div className="lg:col-span-6 relative w-full flex flex-col items-center justify-center lg:overflow-visible">
             
             {/* Ambient background glow for pigeon */}
             <div className="absolute w-[80%] h-[80%] rounded-full bg-[#0088cc]/10 blur-[100px] pointer-events-none" />
@@ -303,7 +304,7 @@ export default function Hero() {
                 },
                 opacity: { duration: 1 }
               }}
-              className="w-full max-w-[550px] relative z-10 select-none"
+              className="w-full max-w-[750px] md:max-w-[850px] lg:max-w-[1000px] xl:max-w-[1100px] lg:scale-125 xl:scale-135 relative z-10 select-none"
             >
               <video
                 src="/hero.webm"
@@ -316,56 +317,56 @@ export default function Hero() {
               />
             </motion.div>
 
-            {/* Wooden Signpost */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ type: 'spring', delay: 0.4, stiffness: 80 }}
-              className="absolute right-0 bottom-[-40px] md:bottom-[-20px] lg:right-[-20px] z-20 w-[180px] sm:w-[240px] flex flex-col items-center select-none"
-            >
-              {/* The stack of planks */}
-              <div className="flex flex-col items-center gap-1.5 w-full relative z-10">
-                {/* Plank 1 */}
-                <div
-                  className="w-full bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-4 py-2 text-center rotate-[-1.5deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
-                  style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
-                >
-                  <span className="font-display text-white text-base sm:text-xl tracking-wider drop-shadow-[0_2px_0_#44250e]">FAST.</span>
-                </div>
-
-                {/* Plank 2 */}
-                <div
-                  className="w-[95%] bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-4 py-2 text-center rotate-[1deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
-                  style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
-                >
-                  <span className="font-display text-white text-base sm:text-xl tracking-wider drop-shadow-[0_2px_0_#44250e]">RELIABLE.</span>
-                </div>
-
-                {/* Plank 3 */}
-                <div
-                  className="w-full bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-4 py-2 text-center rotate-[-2deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
-                  style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
-                >
-                  <span className="font-display text-white text-sm sm:text-lg tracking-wider drop-shadow-[0_2px_0_#44250e]">DECENTRALIZED.</span>
-                </div>
-
-                {/* Plank 4 */}
-                <div
-                  className="w-[105%] bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-4 py-2 text-center rotate-[1.5deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
-                  style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
-                >
-                  <span className="font-display text-[#9ed3ff] text-xs sm:text-base tracking-wider drop-shadow-[0_2px_0_#44250e]">POMBO DELIVERS.</span>
-                </div>
-              </div>
-
-              {/* Wooden Post */}
-              <div className="w-4 sm:w-5 h-20 sm:h-28 bg-[#44250e] border-x-[2px] border-b-[2px] border-[#291405] shadow-[inset_-2px_0_0_rgba(255,255,255,0.1),_0_4px_0_rgba(0,0,0,0.2)] mt-[-4px]" />
-            </motion.div>
-
           </div>
 
         </div>
       </div>
+
+      {/* Wooden Signpost - Attached to bottom right corner, hidden on mobile, smaller on desktop */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
+        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+        transition={{ type: 'spring', delay: 0.4, stiffness: 80 }}
+        className="absolute right-4 bottom-4 md:right-8 md:bottom-8 z-30 w-[130px] md:w-[160px] lg:w-[185px] hidden md:flex flex-col items-center select-none"
+      >
+        {/* The stack of planks */}
+        <div className="flex flex-col items-center gap-1.5 w-full relative z-10">
+          {/* Plank 1 */}
+          <div
+            className="w-full bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[-1.5deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
+            style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
+          >
+            <span className="font-display text-white text-sm md:text-base lg:text-lg tracking-wider drop-shadow-[0_2px_0_#44250e]">FAST.</span>
+          </div>
+
+          {/* Plank 2 */}
+          <div
+            className="w-[95%] bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[1deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
+            style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
+          >
+            <span className="font-display text-white text-sm md:text-base lg:text-lg tracking-wider drop-shadow-[0_2px_0_#44250e]">RELIABLE.</span>
+          </div>
+
+          {/* Plank 3 */}
+          <div
+            className="w-full bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[-2deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
+            style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
+          >
+            <span className="font-display text-white text-xs md:text-sm lg:text-base tracking-wider drop-shadow-[0_2px_0_#44250e]">DECENTRALIZED.</span>
+          </div>
+
+          {/* Plank 4 */}
+          <div
+            className="w-[105%] bg-[#6a3e1e] border-[3px] border-[#44250e] rounded-xl px-2.5 py-1.5 text-center rotate-[1.5deg] shadow-[inset_0_2px_0_rgba(255,255,255,0.15),_0_5px_0_rgba(0,0,0,0.3)] hover:rotate-[0deg] transition-transform duration-300"
+            style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.1) 50%, transparent 50%)", backgroundSize: "100% 4px" }}
+          >
+            <span className="font-display text-[#9ed3ff] text-[10px] md:text-xs lg:text-sm tracking-wider drop-shadow-[0_2px_0_#44250e]">POMBO DELIVERS.</span>
+          </div>
+        </div>
+
+        {/* Wooden Post */}
+        <div className="w-3.5 h-12 md:h-16 bg-[#44250e] border-x-[2px] border-b-[2px] border-[#291405] shadow-[inset_-2px_0_0_rgba(255,255,255,0.1),_0_4px_0_rgba(0,0,0,0.2)] mt-[-4px]" />
+      </motion.div>
     </section>
   )
 }
