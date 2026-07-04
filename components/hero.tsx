@@ -323,12 +323,11 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Wooden Signpost - Attached to bottom right corner, hidden on mobile, smaller on desktop */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
         animate={{ opacity: 1, scale: 1, rotate: 0 }}
         transition={{ type: 'spring', delay: 0.4, stiffness: 80 }}
-        className="absolute right-4 bottom-4 md:right-8 md:bottom-8 z-30 w-[130px] md:w-[160px] lg:w-[185px] hidden md:flex flex-col items-center select-none"
+        className="absolute right-4 bottom-0 md:right-8 z-30 w-[130px] md:w-[160px] lg:w-[185px] hidden md:flex flex-col items-center select-none"
       >
         {/* The stack of planks */}
         <div className="flex flex-col items-center gap-1.5 w-full relative z-10">
