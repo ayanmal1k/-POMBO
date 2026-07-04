@@ -26,6 +26,7 @@ export default function Hero() {
   const [stage, setStage] = useState<'loading' | 'transitioning' | 'ready'>('loading')
   const [activeSection, setActiveSection] = useState<'hero' | 'lore' | 'memes' | 'how-to-buy' | 'social'>('hero')
   const [isDesktop, setIsDesktop] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const navItems = [
     { label: 'Home', href: '#hero', section: 'hero' as const },
     { label: 'Lore', href: '#lore', section: 'lore' as const },
@@ -36,9 +37,15 @@ export default function Hero() {
 
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 1024)
+    setIsMobile(window.innerWidth < 1024)
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024)
+    const handleMobileResize = () => setIsMobile(window.innerWidth < 1024)
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    window.addEventListener('resize', handleMobileResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('resize', handleMobileResize)
+    }
   }, [])
 
   const { scrollY } = useScroll()
@@ -346,21 +353,6 @@ export default function Hero() {
                 </a>
               </motion.div>
 
-              <div className="md:hidden w-full flex justify-center mb-8">
-                <div className="w-[260px] scale-[2.05] pointer-events-none select-none origin-center">
-                  <video
-                    src="/hero.webm"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-auto object-contain"
-                    style={{ filter: 'url(#erode-filter) drop-shadow(0 20px 50px rgba(0,136,204,0.3))' }}
-                    aria-hidden="true"
-                  />
-                </div>
-              </div>
-
               {/* Contract Address Card */}
               <motion.div
                 variants={fadeInUp}
@@ -423,7 +415,7 @@ export default function Hero() {
             </motion.div>
 
             {/* Right Column - Placeholder to reserve space on desktop */}
-            <div className="hidden lg:col-span-6 lg:flex relative w-full h-[320px] sm:h-[420px] lg:h-[550px] items-center justify-center pointer-events-none">
+            <div className="lg:col-span-6 relative w-full h-[320px] sm:h-[420px] lg:h-[550px] flex items-center justify-center pointer-events-none">
               {/* Ambient background glow for pigeon */}
               <div className="absolute w-[80%] h-[80%] rounded-full bg-[#0088cc]/10 blur-[100px] pointer-events-none" />
             </div>
@@ -480,7 +472,7 @@ export default function Hero() {
       {/* Lore Section */}
       <section
         id="lore"
-        className="relative w-full min-h-[62vh] md:min-h-[85vh] -mt-10 md:mt-0 py-0 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#0f2a5c] text-white flex items-start md:items-center justify-start md:justify-center overflow-hidden border-t border-white/5"
+        className="relative w-full min-h-[85vh] py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-[#0f2a5c] text-white flex items-center justify-center overflow-hidden border-t border-white/5"
       >
         <div className="relative max-w-7xl mx-auto w-full z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center w-full">
@@ -557,37 +549,58 @@ export default function Hero() {
       </section>
 
       {/* Floating Pigeon WebM Video - Absolute positioned relative to section wrapper to avoid layout jitter */}
-      <motion.div
-        layout
-        layoutId="hero-bird-video"
-        transition={{
-          layout: { type: 'spring', stiffness: 50, damping: 14 },
-          scaleX: { type: 'spring', stiffness: 60, damping: 15 },
-          y: stage === 'ready' ? { repeat: Infinity, duration: 6, ease: 'easeInOut' } : undefined
-        }}
-        animate={
-          stage === 'ready'
-            ? {
-              y: [0, -15, 0],
-              scaleX: activeSection === 'hero' ? 1 : -1,
-            }
-            : {
-              scaleX: 1,
-            }
-        }
-        className="hidden md:block absolute left-1/2 top-[74%] sm:top-[58%] md:top-[25%] lg:top-[25%] lg:left-[73%] -translate-x-1/2 -translate-y-1/2 z-20 w-[190px] sm:w-[320px] md:w-[440px] lg:w-[580px] xl:w-[680px] lg:scale-[1.25] xl:scale-[1.35] pointer-events-none select-none origin-center"
-      >
-        <video
-          src="/hero.webm"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-auto object-contain"
-          style={{ filter: 'url(#erode-filter) drop-shadow(0 20px 50px rgba(0,136,204,0.3))' }}
-          aria-hidden="true"
-        />
-      </motion.div>
+      {isMobile ? (
+        <div className="absolute left-1/2 top-[68%] -translate-x-1/2 -translate-y-1/2 z-20 w-[260px] scale-[2.05] pointer-events-none select-none origin-center">
+          <video
+            src="/hero.webm"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-auto object-contain"
+            style={{ filter: 'url(#erode-filter) drop-shadow(0 20px 50px rgba(0,136,204,0.3))' }}
+            aria-hidden="true"
+          />
+        </div>
+      ) : (
+        <motion.div
+          layout
+          layoutId="hero-bird-video"
+          transition={{
+            layout: { type: 'spring', stiffness: 50, damping: 14 },
+            scaleX: { type: 'spring', stiffness: 60, damping: 15 },
+            y: stage === 'ready' ? { repeat: Infinity, duration: 6, ease: 'easeInOut' } : undefined
+          }}
+          animate={
+            stage === 'ready'
+              ? {
+                y: [0, -15, 0],
+                scaleX: activeSection === 'hero' ? 1 : -1,
+              }
+              : {
+                scaleX: 1,
+              }
+          }
+          className={
+            stage === 'loading'
+              ? "absolute left-1/2 top-[12%] sm:top-[12%] md:top-[25%] -translate-x-1/2 -translate-y-1/2 z-40 w-[260px] sm:w-[320px] md:w-[500px] lg:w-[650px] scale-[2.05] sm:scale-[1.45] md:scale-[1.85] pointer-events-none select-none origin-center"
+              : activeSection === 'hero'
+                ? "absolute left-1/2 top-[74%] sm:top-[58%] md:top-[25%] lg:top-[25%] lg:left-[73%] -translate-x-1/2 -translate-y-1/2 z-20 w-[190px] sm:w-[320px] md:w-[440px] lg:w-[580px] xl:w-[680px] lg:scale-[1.25] xl:scale-[1.35] pointer-events-none select-none origin-center"
+                : "absolute left-1/2 top-[78%] sm:top-[12%] lg:top-[75%] lg:left-[27%] -translate-x-1/2 -translate-y-1/2 z-20 w-[190px] sm:w-[320px] md:w-[440px] lg:w-[580px] xl:w-[680px] lg:scale-[1.25] xl:scale-[1.35] pointer-events-none select-none origin-center"
+          }
+        >
+          <video
+            src="/hero.webm"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-auto object-contain"
+            style={{ filter: 'url(#erode-filter) drop-shadow(0 20px 50px rgba(0,136,204,0.3))' }}
+            aria-hidden="true"
+          />
+        </motion.div>
+      )}
 
       {/* SVG Erode Filter to shave off 1.2px transparent video black alpha-fringe outline */}
       <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
