@@ -312,7 +312,8 @@ export default function Hero() {
                 loop
                 muted
                 playsInline
-                className="w-full h-auto object-contain pointer-events-none drop-shadow-[0_20px_50px_rgba(0,136,204,0.3)]"
+                className="w-full h-auto object-contain pointer-events-none"
+                style={{ filter: 'url(#erode-filter) drop-shadow(0 20px 50px rgba(0,136,204,0.3))' }}
                 aria-hidden="true"
               />
             </motion.div>
@@ -367,6 +368,16 @@ export default function Hero() {
         {/* Wooden Post */}
         <div className="w-3.5 h-12 md:h-16 bg-[#44250e] border-x-[2px] border-b-[2px] border-[#291405] shadow-[inset_-2px_0_0_rgba(255,255,255,0.1),_0_4px_0_rgba(0,0,0,0.2)] mt-[-4px]" />
       </motion.div>
+
+      {/* SVG Erode Filter to shave off 1.2px transparent video black alpha-fringe outline */}
+      <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
+        <defs>
+          <filter id="erode-filter">
+            <feMorphology operator="erode" radius="1.2" in="SourceAlpha" result="eroded" />
+            <feComposite in="SourceGraphic" in2="eroded" operator="in" />
+          </filter>
+        </defs>
+      </svg>
     </section>
   )
 }
