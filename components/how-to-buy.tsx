@@ -113,117 +113,131 @@ export default function HowToBuy() {
     const section = sectionRef.current
     if (!section) return
 
-    const ctx = gsap.context(() => {
-      // Header slide in
-      gsap.from(headerRef.current, {
-        opacity: 0,
-        y: 60,
-        duration: 1,
-        ease: 'power3.out',
+    const header = headerRef.current
+    const cta = ctaRef.current
+    const cards = stepsRef.current.filter((step): step is HTMLDivElement => step !== null)
+    const connectors = connectorsRef.current.filter((connector): connector is HTMLDivElement => connector !== null)
+    const icons = cards
+      .map((card) => card.querySelector<HTMLElement>('.htb-icon'))
+      .filter((icon): icon is HTMLElement => icon !== null)
+    const numbers = cards
+      .map((card) => card.querySelector<HTMLElement>('.htb-number'))
+      .filter((number): number is HTMLElement => number !== null)
+
+    const mm = gsap.matchMedia()
+
+    mm.add('(min-width: 768px)', () => {
+      if (!header || !cta || cards.length === 0) return
+
+      gsap.set([header, cta], { opacity: 0, y: 24 })
+      gsap.set(cards, { opacity: 0, y: 90, scale: 0.94, filter: 'blur(10px)' })
+      gsap.set(connectors, { scaleY: 0, transformOrigin: 'top center' })
+      gsap.set(icons, { opacity: 0, scale: 0.65, rotate: -20 })
+      gsap.set(numbers, { opacity: 0, y: 18 })
+
+      const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: headerRef.current,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
+          trigger: section,
+          start: 'top 78%',
+          end: 'bottom 20%',
+          scrub: 1.15,
+          invalidateOnRefresh: true,
         },
       })
 
-      // Step cards — alternate left/right slide
-      stepsRef.current.forEach((step, i) => {
-        if (!step) return
-        const xFrom = i % 2 === 1 ? 80 : -80
-
-        gsap.from(step, {
-          opacity: 0,
-          x: xFrom,
-          y: 30,
-          scale: 0.93,
+      tl.to(header, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+        .to(cards, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: 'blur(0px)',
+          stagger: 0.12,
           duration: 0.9,
           ease: 'power3.out',
-          scrollTrigger: {
-            trigger: step,
-            start: 'top 89%',
-            toggleActions: 'play none none reverse',
-          },
-        })
-
-        // Icon pop-rotate
-        const icon = step.querySelector('.htb-icon')
-        if (icon) {
-          gsap.from(icon, {
-            scale: 0,
-            rotate: -25,
-            opacity: 0,
-            duration: 0.65,
-            delay: 0.2,
-            ease: 'back.out(1.8)',
-            scrollTrigger: {
-              trigger: step,
-              start: 'top 89%',
-              toggleActions: 'play none none reverse',
-            },
-          })
-        }
-
-        // Number fade up
-        const num = step.querySelector('.htb-number')
-        if (num) {
-          gsap.from(num, {
-            opacity: 0,
-            y: 16,
-            duration: 0.5,
-            delay: 0.1,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: step,
-              start: 'top 89%',
-              toggleActions: 'play none none reverse',
-            },
-          })
-        }
-      })
-
-      // Connector line draw-in
-      connectorsRef.current.forEach((conn) => {
-        if (!conn) return
-        gsap.from(conn, {
-          scaleY: 0,
-          transformOrigin: 'top center',
-          duration: 0.6,
+        }, '-=0.25')
+        .to(icons, {
+          opacity: 1,
+          scale: 1,
+          rotate: 0,
+          stagger: 0.12,
+          duration: 0.7,
+          ease: 'back.out(1.8)',
+        }, '-=0.55')
+        .to(numbers, {
+          opacity: 1,
+          y: 0,
+          stagger: 0.12,
+          duration: 0.55,
+          ease: 'power2.out',
+        }, '-=0.75')
+        .to(connectors, {
+          scaleY: 1,
+          stagger: 0.08,
+          duration: 0.7,
           ease: 'power2.inOut',
-          scrollTrigger: {
-            trigger: conn,
-            start: 'top 92%',
-            toggleActions: 'play none none reverse',
-          },
-        })
+        }, '-=0.55')
+        .to(cta, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'back.out(1.4)' }, '-=0.35')
+
+      return () => tl.scrollTrigger?.kill()
+    })
+
+    mm.add('(max-width: 767px)', () => {
+      if (!header || !cta || cards.length === 0) return
+
+      gsap.set([header, cta], { opacity: 0, y: 18 })
+      gsap.set(cards, { opacity: 0, y: 42, scale: 0.97 })
+      gsap.set(connectors, { scaleY: 0, transformOrigin: 'top center' })
+      gsap.set(icons, { opacity: 0, scale: 0.72, rotate: -12 })
+      gsap.set(numbers, { opacity: 0, y: 10 })
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 86%',
+          end: 'bottom 35%',
+          scrub: 0.9,
+          invalidateOnRefresh: true,
+        },
       })
 
-      // CTA bounce in + float
-      if (ctaRef.current) {
-        gsap.from(ctaRef.current, {
-          opacity: 0,
-          y: 50,
-          scale: 0.85,
-          duration: 0.9,
-          ease: 'back.out(1.5)',
-          scrollTrigger: {
-            trigger: ctaRef.current,
-            start: 'top 93%',
-            toggleActions: 'play none none reverse',
-          },
-        })
-        gsap.to(ctaRef.current, {
-          y: -9,
-          duration: 1.9,
-          ease: 'sine.inOut',
-          yoyo: true,
-          repeat: -1,
-          delay: 1,
-        })
-      }
-    }, section)
+      tl.to(header, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
+        .to(cards, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          stagger: 0.1,
+          duration: 0.7,
+          ease: 'power3.out',
+        }, '-=0.2')
+        .to(icons, {
+          opacity: 1,
+          scale: 1,
+          rotate: 0,
+          stagger: 0.1,
+          duration: 0.55,
+          ease: 'back.out(1.7)',
+        }, '-=0.45')
+        .to(numbers, {
+          opacity: 1,
+          y: 0,
+          stagger: 0.1,
+          duration: 0.45,
+          ease: 'power2.out',
+        }, '-=0.55')
+        .to(connectors, {
+          scaleY: 1,
+          stagger: 0.08,
+          duration: 0.55,
+          ease: 'power2.inOut',
+        }, '-=0.35')
+        .to(cta, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'back.out(1.35)' }, '-=0.25')
 
-    return () => ctx.revert()
+      return () => tl.scrollTrigger?.kill()
+    })
+
+    ScrollTrigger.refresh()
+
+    return () => mm.revert()
   }, [])
 
   return (
