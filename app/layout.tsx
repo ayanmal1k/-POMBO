@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Lilita_One, Sora } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
+import Script from 'next/script'
 import './globals.css'
 
 const lilitaOne = Lilita_One({
@@ -84,6 +85,11 @@ export default function RootLayout({
         {children}
         <Toaster position="top-center" richColors />
         <Analytics />
+        <Script
+          src="https://cdn.zanderio.ai/widget/loader.js"
+          data-id="wdg_bAUioeSTLPnPChj9vzw49zlj"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   )
